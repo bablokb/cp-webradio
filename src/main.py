@@ -35,9 +35,10 @@ class Main:
     self._logo  = Logo(hw_config.DISPLAY())
     self._channels = Channels()
     self._player   = Player(hw_config.I2S_PINS(),
-                            hw_config.MUTE(),
                             app_config.bufsize,
                             self._channels.https)
+    self._playing = False
+    self._muted   = False
 
     # setup keys and navigation
     keys = hw_config.KEYS()
@@ -47,6 +48,8 @@ class Main:
     self._key_events = self._keys.events
     self._key_callbacks = [
       self._on_next,self._on_prev,self._on_volup,self._on_voldown]
+    if len(keys) == 5:
+      self._key_callbacks.append(self._on_mute)
 
   # --- print debug-message   ------------------------------------------------
 
@@ -89,8 +92,10 @@ class Main:
 
     # stop last channel
     self.msg("stopping player")
-    self._player.mute(True)
+    self._muted = True
+    self._player.mute(self._muted)
     self._player.stop()
+    self._playing = False
     self.msg(f"_play: free memory after stop(): {gc.mem_free()}")
 
     # update logo
@@ -99,7 +104,9 @@ class Main:
     # start given channel
     self.msg(f"playing {channel.name}")
     if self._player.play(channel.url):
-      self._player.mute(False)
+      self._playing = True
+      self._muted = False
+      self._player.mute(self._muted)
       self.msg(f"_play: free memory after play(): {gc.mem_free()}")
     else:
       self._logo.show(img="error")
@@ -118,17 +125,24 @@ class Main:
     channel = self._channels.next()
     self._play(channel)
 
-  # --- navigation callback: volumen up   ------------------------------------
+  # --- navigation callback: volume up   -------------------------------------
 
   def _on_volup(self):
     """ increase volume """
     pass
 
-  # --- navigation callback: volumen down   ----------------------------------
+  # --- navigation callback: volume down   -----------------------------------
 
   def _on_voldown(self):
     """ decrease volume """
     pass
+
+  # --- navigation callback: mute   ------------------------------------------
+
+  def _on_mute(self):
+    """ mute player """
+    self._muted = not self._muted
+    self._player.mute(self._muted)
 
   # --- main loop   ----------------------------------------------------------
 
@@ -152,6 +166,12 @@ class Main:
       event = self._key_events.get()
       if event and event.pressed:
         self._key_callbacks[event.key_number]()
+      if self._playing and not self._player.playing:
+        # we are into trouble
+        self.msg("player not playing...")
+        self.playing = False
+        self._logo.show(img="error")
+      time.sleep(0.2)
 
 # --- main application code   -------------------------------------------------
 

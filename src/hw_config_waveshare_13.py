@@ -22,16 +22,16 @@ PIN_TFT_DC   = board.GP8
 PIN_SPI_MOSI = board.GP11
 PIN_SPI_CLK  = board.GP10
 
-PIN_PREV     = board.GPI6      # joystick left
-PIN_NEXT     = board.GP20      # joystick right
-PIN_VOLDOWN  = board.GP18      # joystick down
-PIN_VOLUP    = board.GP2       # joystick up
+PIN_BTN_PREV    = board.GPI6      # joystick left
+PIN_BTN_NEXT    = board.GP20      # joystick right
+PIN_BTN_VOLDOWN = board.GP18      # joystick down
+PIN_BTN_VOLUP   = board.GP2       # joystick up
+PIN_BTN_MUTE    = board.GP18      # joystick down
 
 PIN_I2S_BCLK = board.GP6
 PIN_I2S_WSEL = board.GP7
 PIN_I2S_DATA = board.GP5
-
-PIN_MUTE     = None
+PIN_I2S_MUTE = board.GP4
 
 class Settings:
   pass
@@ -50,17 +50,12 @@ def _get_display():
 def _get_keys():
   """ return list of pin-numbers for next, prev, volup, voldown """
   # format is (active-state,[next, prev, volup, voldown])
-  return (False,[PIN_NEXT, PIN_PREV, PIN_VOLUP, PIN_VOLDOWN])
+  return (False,[PIN_BTN_NEXT, PIN_BTN_PREV,
+                 PIN_BTN_VOLUP, PIN_BTN_VOLDOWN, PIN_BTN_MUTE])
 
 def _get_i2s_pins():
-  return [PIN_I2S_BCLK,PIN_I2S_WSEL,PIN_I2S_DATA]
-
-def _get_mute_pin():
-  """ return mute pin """
-  # format is (active-state,pin)
-  return (False,PIN_MUTE)
+  return [PIN_I2S_BCLK,PIN_I2S_WSEL,PIN_I2S_DATA,PIN_I2S_MUTE]
 
 hw_config.DISPLAY  = _get_display
 hw_config.KEYS     = _get_keys
 hw_config.I2S_PINS = _get_i2s_pins
-hw_config.MUTE     = _get_mute_pin

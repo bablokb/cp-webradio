@@ -24,16 +24,16 @@ import adafruit_requests
 class Player:
   """ Player for webradio """
 
-  def __init__(self,i2s_pins,mute_pin,bufsize,use_ssl=False):
+  def __init__(self,i2s_pins,bufsize,use_ssl=False):
     """ constructor """
     self._buffer  = bytearray(bufsize)
     self._decoder = audiomp3.MP3Decoder("dummy.mp3", self._buffer)
-    self._i2s     = audiobusio.I2SOut(*i2s_pins)
+    self._i2s     = audiobusio.I2SOut(*i2s_pins[:3])
 
-    if mute_pin[1]:
+    if len(i2s_pins) == 4:
       # create mute-pin and start muted
-      self._mute = (mute_pin[0],digitalio.DigitalInOut(mute_pin[1]))
-      self._mute[1].switch_to_output(value=mute_pin[0])
+      self._mute = digitalio.DigitalInOut(i2s_pins[3])
+      self._mute.switch_to_output(value=False)
     else:
       self._mute = None
       
@@ -54,7 +54,7 @@ class Player:
     while True:
       try:
         self._response = self._requests.get(
-          url,
+          url, timeout = 5,
           headers = {"connection": "close"},
           stream = True)
         if not self._response:
@@ -80,13 +80,14 @@ class Player:
       except Exception as ex:
         print(f"stop(): exeception: {ex}")
 
+  @property
+  def playing(self):
+    """ status of player """
+    return self._i2s.playing
+
   # --- mute   ---------------------------------------------------------------
 
   def mute(self,value):
-    """ drive mute-pin: value=True is mute """
-
+    """ drive mute-pin """
     if self._mute:
-      if not self._mute[0]:
-        # active low, so change
-        value = not value
-      self._mute[1].value = value
+      self._mute.value = not value # active low, so change

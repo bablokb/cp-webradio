@@ -23,16 +23,16 @@ PIN_TFT_DC   = board.GPIO9     # board.MISO -> reuse unused pin
 PIN_SPI_MOSI = board.GPIO10    # board.MOSI
 PIN_SPI_CLK  = board.GPIO11    # board.SCLK
 
-PIN_PREV     = board.GPIO6     # button B, lower left
-PIN_NEXT     = board.GPIO20    # button Y, lower right (newer boards: GPIO24)
-PIN_VOLDOWN  = board.GPIO5     # button A, upper left
-PIN_VOLUP    = board.GPIO16    # button X, upper right
+PIN_BTN_PREV    = board.GPIO6     # button B, lower left
+PIN_BTN_NEXT    = board.GPIO20    # button Y, lower right (newer boards: GPIO24)
+PIN_BTN_VOLDOWN = board.GPIO5     # button A, upper left
+PIN_BTN_VOLUP   = board.GPIO16    # button X, upper right
+PIN_BTN_MUTE    = None
 
 PIN_I2S_BCLK = board.GPIO18
 PIN_I2S_WSEL = board.GPIO19
 PIN_I2S_DATA = board.GPIO21
-
-PIN_MUTE = board.GPIO25
+PIN_I2S_MUTE = board.GPIO25
 
 class Settings:
   pass
@@ -51,17 +51,11 @@ def _get_display():
 def _get_keys():
   """ return list of pin-numbers for next, prev, volup, voldown """
   # format is (active-state,[next, prev, volup, voldown])
-  return (False,[PIN_NEXT, PIN_PREV, PIN_VOLUP, PIN_VOLDOWN])
+  return (False,[PIN_BTN_NEXT, PIN_BTN_PREV, PIN_BTN_VOLUP, PIN_BTN_VOLDOWN])
 
 def _get_i2s_pins():
-  return [PIN_I2S_BCLK,PIN_I2S_WSEL,PIN_I2S_DATA]
-
-def _get_mute_pin():
-  """ return mute pin """
-  # format is (active-state,pin)
-  return (False,PIN_MUTE)
+  return [PIN_I2S_BCLK,PIN_I2S_WSEL,PIN_I2S_DATA,PIN_I2S_MUTE]
 
 hw_config.DISPLAY  = _get_display
 hw_config.KEYS     = _get_keys
 hw_config.I2S_PINS = _get_i2s_pins
-hw_config.MUTE     = _get_mute_pin

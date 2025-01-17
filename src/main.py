@@ -41,8 +41,9 @@ class Main:
     self._player   = Player(hw_config.get_i2s_pins(),
                             app_config.bufsize,
                             self._channels.https)
-    self._playing = None
-    self._muted   = False
+    self._playing  = None
+    self._muted    = False
+    self._start_at = None
 
     # setup keys and navigation
     keys = hw_config.get_keys()
@@ -91,12 +92,11 @@ class Main:
       self._logo and self._logo.show(img="error")
       raise ConnectionError(f"could not connect to {secrets.ssid}")
 
-  # --- play a given channel   -----------------------------------------------
+  # --- stop playing   -------------------------------------------------------
 
-  def _play(self,channel):
-    """ play given channel """
+  def _stop(self):
+    """ stop current playback """
 
-    # stop last channel
     self.msg("stopping player")
     self._muted = True
     self._player.mute(self._muted)
@@ -104,10 +104,16 @@ class Main:
     self._playing = None
     self.msg(f"_play: free memory after stop(): {gc.mem_free()}")
 
-    # update logo
-    self._logo and self._logo.show(channel)
+  # --- start playing   ------------------------------------------------------
+
+  def _start(self,channel=None):
+    """ start playing current or given channel """
 
     # start given channel
+    self._start_at = None
+    if not channel:
+      channel = self._channels.current()
+
     self.msg(f"playing {channel.name}")
     if self._player.play(channel.url):
       self._playing = time.monotonic()
@@ -116,6 +122,24 @@ class Main:
       self.msg(f"_play: free memory after play(): {gc.mem_free()}")
     else:
       self._logo and self._logo.show(img="error")
+
+  # --- play a given channel   -----------------------------------------------
+
+  def _play(self,channel):
+    """ play given channel """
+
+    # stop current playback
+    self._stop()
+
+    # update logo
+    self._logo and self._logo.show(channel)
+    if not app_config.switch_delay:
+      # start now
+      self._start(channel)
+    else:
+      # schedule start in a few seconds
+      self._start_at = time.monotonic() + app_config.switch_delay
+      self.msg(f"start of {channel.name} in {app_config.switch_delay}s")
 
   # --- navigation callback: prev   ------------------------------------------
 
@@ -169,9 +193,16 @@ class Main:
       self._channels.prev()
 
     while True:
+      # check for button
       event = self._key_events.get()
       if event and event.pressed:
         self._key_callbacks[event.key_number]()
+
+      # check for scheduled start
+      if self._start_at and time.monotonic() > self._start_at:
+        self._start()
+
+      # check for error condition
       if (self._playing and
           time.monotonic()-self._playing > app_config.max_wait and
           not self._player.playing):

@@ -37,7 +37,7 @@ class Main:
     self._player   = Player(hw_config.get_i2s_pins(),
                             app_config.bufsize,
                             self._channels.https)
-    self._playing = False
+    self._playing = None
     self._muted   = False
 
     # setup keys and navigation
@@ -96,7 +96,7 @@ class Main:
     self._muted = True
     self._player.mute(self._muted)
     self._player.stop()
-    self._playing = False
+    self._playing = None
     self.msg(f"_play: free memory after stop(): {gc.mem_free()}")
 
     # update logo
@@ -105,7 +105,7 @@ class Main:
     # start given channel
     self.msg(f"playing {channel.name}")
     if self._player.play(channel.url):
-      self._playing = True
+      self._playing = time.monotonic()
       self._muted = False
       self._player.mute(self._muted)
       self.msg(f"_play: free memory after play(): {gc.mem_free()}")
@@ -167,10 +167,12 @@ class Main:
       event = self._key_events.get()
       if event and event.pressed:
         self._key_callbacks[event.key_number]()
-      if self._playing and not self._player.playing:
+      if (self._playing and
+          time.monotonic()-self._playing > app_config.max_wait and
+          not self._player.playing):
         # we are into trouble
-        self.msg("player not playing...")
-        self._playing = False
+        self.msg(f"player not playing since {app_config.max_wait}s ...")
+        self._playing = None
         self._logo.show(img="error")
       time.sleep(0.2)
 

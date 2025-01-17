@@ -25,7 +25,7 @@ class Logo:
 
   # --- show logo or name   --------------------------------------------------
 
-  def show(self,channel,img=None):
+  def show(self,channel=None,img=None):
     """ load and show logo. Pass img to show explicit bmp (e.g. error) """
 
     if img:

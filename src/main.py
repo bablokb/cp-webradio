@@ -32,23 +32,24 @@ class Main:
     """ constructor """
 
     # basic components
-    self._logo  = Logo(hw_config.DISPLAY())
+    self._logo  = Logo(hw_config.get_display())
     self._channels = Channels()
-    self._player   = Player(hw_config.I2S_PINS(),
+    self._player   = Player(hw_config.get_i2s_pins(),
                             app_config.bufsize,
                             self._channels.https)
     self._playing = False
     self._muted   = False
 
     # setup keys and navigation
-    keys = hw_config.KEYS()
-    self._keys = keypad.Keys(keys[1],
+    keys = hw_config.get_keys()
+    max_keys = 5 if keys[1][4] else 4
+    self._keys = keypad.Keys(keys[1][:max_keys],
                              value_when_pressed=keys[0],pull=True,
                              interval=0.1,max_events=4)
     self._key_events = self._keys.events
     self._key_callbacks = [
-      self._on_next,self._on_prev,self._on_volup,self._on_voldown]
-    if len(keys) == 5:
+      self._on_prev,self._on_next,self._on_volup,self._on_voldown]
+    if keys[1][4]:
       self._key_callbacks.append(self._on_mute)
 
   # --- print debug-message   ------------------------------------------------
@@ -169,7 +170,7 @@ class Main:
       if self._playing and not self._player.playing:
         # we are into trouble
         self.msg("player not playing...")
-        self.playing = False
+        self._playing = False
         self._logo.show(img="error")
       time.sleep(0.2)
 

@@ -23,7 +23,7 @@ HEIGHT       = 240
 ROWSTART     = 80
 ROTATION     = 180
 
-PIN_BTN_PREV    = board.GPI6      # joystick left
+PIN_BTN_PREV    = board.GP16      # joystick left
 PIN_BTN_NEXT    = board.GP20      # joystick right
 PIN_BTN_VOLDOWN = board.GP18      # joystick down
 PIN_BTN_VOLUP   = board.GP2       # joystick up

@@ -191,6 +191,7 @@ class Main:
     else:
       # select last channel, wait for 'next' to play it
       self._channels.prev()
+      self._logo and self._logo.show(img="radio")
 
     while True:
       # check for button

@@ -47,6 +47,9 @@ class HWConfig:
     """ display definition """
     displayio.release_displays()
     spi = busio.SPI(self.pin_spi_clk, self.pin_spi_mosi)
+    if spi.try_lock():
+      spi.configure(baudrate=60_000_000)
+      spi.unlock()
     display_bus = displayio.FourWire(spi,
                                      command=self.pin_tft_dc,
                                      chip_select=self.pin_tft_cs)

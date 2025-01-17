@@ -32,7 +32,11 @@ class Main:
     """ constructor """
 
     # basic components
-    self._logo  = Logo(hw_config.get_display())
+    display = hw_config.get_display()
+    if display:
+      self._logo = Logo(display)
+    else:
+      self._logo = None
     self._channels = Channels()
     self._player   = Player(hw_config.get_i2s_pins(),
                             app_config.bufsize,
@@ -84,6 +88,7 @@ class Main:
         self.msg(f"{ex}")
     self.msg(f"  connected: {wifi.radio.connected}")
     if not wifi.radio.connected:
+      self._logo and self._logo.show(img="error")
       raise ConnectionError(f"could not connect to {secrets.ssid}")
 
   # --- play a given channel   -----------------------------------------------
@@ -100,7 +105,7 @@ class Main:
     self.msg(f"_play: free memory after stop(): {gc.mem_free()}")
 
     # update logo
-    self._logo.show(channel)
+    self._logo and self._logo.show(channel)
 
     # start given channel
     self.msg(f"playing {channel.name}")
@@ -110,7 +115,7 @@ class Main:
       self._player.mute(self._muted)
       self.msg(f"_play: free memory after play(): {gc.mem_free()}")
     else:
-      self._logo.show(img="error")
+      self._logo and self._logo.show(img="error")
 
   # --- navigation callback: prev   ------------------------------------------
 
@@ -173,7 +178,7 @@ class Main:
         # we are into trouble
         self.msg(f"player not playing since {app_config.max_wait}s ...")
         self._playing = None
-        self._logo.show(img="error")
+        self._logo and self._logo.show(img="error")
       time.sleep(0.2)
 
 # --- main application code   -------------------------------------------------

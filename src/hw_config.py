@@ -13,71 +13,49 @@ from adafruit_st7789 import ST7789
 
 class HWConfig:
   def __init__(self,
-               pin_tft_cs   = None,
-               pin_tft_dc   = None,
-               pin_spi_mosi = None,
-               pin_spi_clk  = None,
-               width        = 0,
-               height       = 0,
-               rowstart     = 0,
-               rotation     = 0,
-
-               pin_btn_prev    = None,
-               pin_btn_next    = None,
-               pin_btn_voldown = None,
-               pin_btn_volup   = None,
-               pin_btn_mute    = None,
-
-               pin_i2s_bclk = None,
-               pin_i2s_wsel = None,
-               pin_i2s_data = None,
-               pin_i2s_mute = None
+               tft_driver = ST7789,
+               tft_pins = [None]*4,
+               tft_parms = {},
+               btn_pins = [None]*4,
+               btn_active = False,
+               i2s_pins = [None]*3,
                ):
-    # TFT
-    self.pin_tft_cs   = pin_tft_cs
-    self.pin_tft_dc   = pin_tft_dc
-    self.pin_spi_mosi = pin_spi_mosi
-    self.pin_spi_clk  = pin_spi_clk
-    self.width        = width
-    self.height       = height
-    self.rowstart     = rowstart
-    self.rotation     = rotation
+    # TFT (backlight-pin is optional)
+    self._tft_driver = tft_driver
+    self._tft_parms  = tft_parms
+    (self.pin_tft_cs, self.pin_tft_dc,
+     self.pin_spi_mosi, self.pin_spi_clk) = tft_pins[:4]
+    if len(tft_pins) == 5:
+      self._tft_parms['backlight_pin'] = tft_pins[4]
 
-    # buttons
-    self.pin_btn_prev    = pin_btn_prev
-    self.pin_btn_next    = pin_btn_next
-    self.pin_btn_voldown = pin_btn_voldown
-    self.pin_btn_volup   = pin_btn_volup
-    self.pin_btn_mute    = pin_btn_mute
+    # buttons (mute button is optional)
+    self._active  = btn_active
+    self._buttons = btn_pins[:4]
+    if len(btn_pins) == 5:
+      self._buttons.append(btn_pins[4])
+    else:
+      self._buttons.append(None)
 
-    # I2S
-    self.pin_i2s_bclk = pin_i2s_bclk
-    self.pin_i2s_wsel = pin_i2s_wsel
-    self.pin_i2s_data = pin_i2s_data
-    self.pin_i2s_mute = pin_i2s_mute
+    # I2S (mute pin is optional)
+    self._i2s_pins = i2s_pins[:3]
+    if len(i2s_pins) == 4:
+      self._i2s_pins.append(i2s_pins[3])
+    else:
+      self._i2s_pins.append(None)
 
   def get_display(self):
-    """ display definition (override for non ST7789 displays) """
+    """ display definition """
     displayio.release_displays()
     spi = busio.SPI(self.pin_spi_clk, self.pin_spi_mosi)
-    display_bus = displayio.FourWire(
-      spi,
-      command=self.pin_tft_dc, chip_select=self.pin_tft_cs)
-    return ST7789(display_bus, width=self.width,
-                  height=self.height,
-                  rowstart=self.rowstart, rotation=self.rotation)
+    display_bus = displayio.FourWire(spi,
+                                     command=self.pin_tft_dc,
+                                     chip_select=self.pin_tft_cs)
+    return self._tft_driver(display_bus,**self._tft_parms)
 
   def get_keys(self):
-    """ return list of pin-numbers for next, prev, volup, voldown, mute """
-    # format is (active-state,[next, prev, volup, voldown, mute])
-    return (False,[self.pin_btn_next,
-                   self.pin_btn_prev,
-                   self.pin_btn_volup,
-                   self.pin_btn_voldown,
-                   self.pin_btn_mute])
+    """ return list of pin-numbers for prev, next, volup, voldown, mute """
+    # format is (active-state,[prev, next, volup, voldown, mute])
+    return (self._active,self._buttons)
 
   def get_i2s_pins(self):
-    return [self.pin_i2s_bclk,
-            self.pin_i2s_wsel,
-            self.pin_i2s_data,
-            self.pin_i2s_mute]
+    return self._i2s_pins

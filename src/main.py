@@ -53,7 +53,7 @@ class Main:
                              interval=0.1,max_events=4)
     self._key_events = self._keys.events
     self._key_callbacks = [
-      self._on_prev,self._on_next,self._on_volup,self._on_voldown]
+      self._on_prev,self._on_next,self._on_voldown,self._on_volup]
     if keys[1][4]:
       self._key_callbacks.append(self._on_mute)
 

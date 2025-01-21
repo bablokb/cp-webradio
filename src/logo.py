@@ -9,19 +9,60 @@
 
 import gc
 import displayio
-import terminalio
+from adafruit_bitmap_font import bitmap_font
 from adafruit_display_text.bitmap_label import Label
+
+IFONT = "fonts/open-iconic-24.bdf"
+ICONS = ["\uE02E","\uE093","\uE0D6","\uE0D5"]
+#        caret-left, play, voldown, volup
 
 class Logo:
   """ class Logo """
 
-  def __init__(self,display):
+  def __init__(self,display,offsets):
     """ constructor """
     self._display = display
+    self._display.auto_refresh = False
+
     self._group   = displayio.Group()
     self._text    = None
     self._display.root_group = self._group
-    self._display.auto_refresh = False
+
+    # add buttons
+    ifont = bitmap_font.load_font(IFONT)
+    positions = self._get_positions(display,offsets)
+    for icon,pos in zip(ICONS,positions):
+      print(f"icon: {icon}, position: {pos}")
+      itext = Label(ifont,text=icon,color=0xFFFFFF,background_color=0x0000FF)
+      itext.anchored_position = pos[0]
+      itext.anchor_point = pos[1]
+      self._group.append(itext)
+
+  # --- query positions of icons   -------------------------------------------
+
+  def _get_positions(self,display,offsets):
+    """ return list of (position,anchorpoints) for all icons """
+
+    positions = []
+    for off in offsets:
+      # fix relative offsets
+      if 0 < abs(off[0]) < 1:
+        xp = off[0]*display.width
+      else:
+        xp = off[0]
+      if xp < 0:
+        # right edge of the screen
+        xp = display.width + xp; xa = 1
+      else:
+        xa = 0
+      if 0 < abs(off[1]) < 1:
+        yp = off[1]*display.height
+      else:
+        yp = off[1]
+      if yp < 0:
+        yp = display.height + yp
+      positions.append(((xp,yp),(xa,0.5)))
+    return positions
 
   # --- show logo or name   --------------------------------------------------
 
@@ -36,15 +77,15 @@ class Logo:
       self._show_image(logo_path)
     except Exception as ex:
       print(f"logo {logo_path} not found (exception: {ex})")
-      self._show_name(img if img else channel.name)
+      self._show_image(f"/logos/default.bmp")
 
   # --- show image   ---------------------------------------------------------
 
   def _show_image(self,path):
     """ load logo-image as TileGrid """
 
-    if len(self._group):
-      del self._group[0]
+    if len(self._group) > 4:
+      self._group.pop()
       gc.collect()
 
     f = open(path, "rb")
@@ -52,21 +93,5 @@ class Logo:
     x = int((self._display.width-pic.width)/2)
     y = int((self._display.height-pic.height)/2)
     t = displayio.TileGrid(pic, x=x,y=y, pixel_shader=pic.pixel_shader)
-    self._group.insert(0,t)
-    self._display.refresh()
-
-  # --- show name   ----------------------------------------------------------
-
-  def _show_name(self,name):
-    """ show station name as text """
-
-    if self._text:
-      self._text.text = name
-      return
-
-    self._text = Label(terminalio.FONT,text=name)
-    self._text.anchor_point = (0.5,0.5)
-    self._text.anchored_position = (self._display.width//2,
-                                    self._display.height//2)
-    self._group.insert(0,self._text)
+    self._group.append(t)
     self._display.refresh()

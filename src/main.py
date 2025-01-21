@@ -34,7 +34,7 @@ class Main:
     # basic components
     display = hw_config.get_display()
     if display:
-      self._logo = Logo(display)
+      self._logo = Logo(display,hw_config.get_icon_offsets())
     else:
       self._logo = None
     self._channels = Channels()

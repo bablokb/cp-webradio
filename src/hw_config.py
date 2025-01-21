@@ -56,9 +56,26 @@ class HWConfig:
     return self._tft_driver(display_bus,**self._tft_parms)
 
   def get_keys(self):
-    """ return list of pin-numbers for prev, next, volup, voldown, mute """
-    # format is (active-state,[prev, next, volup, voldown, mute])
+    """ return list of pin-numbers for prev, next, volup, voldown, mute
+
+    Format: (active-state,[prev, next, voldown, volup, mute])
+    The mute-key is optional and can be omitted or None
+    """
     return (self._active,self._buttons)
 
   def get_i2s_pins(self):
     return self._i2s_pins
+
+  def get_icon_offsets(self):
+    """ return offsets for icons on the screen
+
+    Format:  [(x-off,y-off),...] for every button in the same order as
+             get_keys()
+    A negative x-offset is from the right boarder, a negative y-offset
+    is from the bottom. If 0 < abs(offset) < 1, then it is interpreted as
+    a fraction of width/height.
+    """
+    return [(1,-0.25),       # lower left  (prev)
+            (-1,-0.25),      # lower right (next)
+            (1,0.25),        # upper left  (voldown)
+            (-1,0.25)]       # upper right (volup)

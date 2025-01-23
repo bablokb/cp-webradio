@@ -32,7 +32,6 @@ class Logo:
     ifont = bitmap_font.load_font(IFONT)
     positions = self._get_positions(display,offsets)
     for icon,pos in zip(ICONS,positions):
-      print(f"icon: {icon}, position: {pos}")
       itext = Label(ifont,text=icon,color=0xFFFFFF,background_color=0x0000FF)
       itext.anchored_position = pos[0]
       itext.anchor_point = pos[1]

@@ -35,10 +35,10 @@ channels = [
     "logo": "BR24"
   },
 
-  #{ "name": "France Musique Baroque",
-  #  "url":  "http://icecast.radiofrance.fr/francemusiquebaroque-midfi.mp3",
-  #  "logo": "france-musique-la-baroque"
-  #},
+  { "name": "France Musique Baroque",
+    "url":  "http://icecast.radiofrance.fr/francemusiquebaroque-midfi.mp3",
+    "logo": "france-musique-la-baroque"
+  }, # playback stops after less than a second
 
   { "name": "MDR KLASSIK",
     "url":  "http://mdr-284350-0.cast.mdr.de/mdr/284350/0/mp3/high/stream.mp3",
@@ -75,10 +75,10 @@ channels = [
     "logo": "rbb-Kultur"
   },
 
-  #{ "name": "SWR 2",
-  #  "url":  "http://liveradio.swr.de/sw282p3/swr2/",
-  #  "logo": "SWR2"
-  #},  # cbr256
+  { "name": "SWR 2",
+    "url":  "http://liveradio.swr.de/sw282p3/swr2/",
+    "logo": "SWR2"
+  },  # cbr256, too much for a Pico2-W, needs ESP32-S3
 
   { "name": "WDR 3",
     "url":  "http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/64/stream.mp3",

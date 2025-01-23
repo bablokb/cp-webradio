@@ -64,8 +64,11 @@ class Player:
         self._decoder.file = self._response.socket
         self._i2s.play(self._decoder)
         return True
+      except RuntimeError as ex:
+        print(f"play(): RuntimeError: {ex}")
+        continue
       except Exception as ex:
-        print(f"play(): exeception: {ex}")
+        print(f"play(): exception: {ex}")
         return False
 
   # --- stop playing   -------------------------------------------------------

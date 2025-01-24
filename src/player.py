@@ -15,6 +15,7 @@ import board
 import digitalio
 import audiobusio
 import audiomp3
+import audiomixer
 
 import wifi
 import socketpool
@@ -45,6 +46,23 @@ class Player:
     else:
       self._requests = adafruit_requests.Session(pool)
 
+  # --- set mixer for the given mp3-decoder parameters   ---------------------
+
+  def _set_mixer(self,decoder):
+    """ set mixer suitable for given mp3-decoder """
+
+    print(f"_set_mixer(): {decoder.sample_rate=}, {decoder.bits_per_sample=}")
+    mixer = audiomixer.Mixer(voice_count=1,
+                             sample_rate=decoder.sample_rate,
+                             channel_count=decoder.channel_count,
+                             bits_per_sample=decoder.bits_per_sample,
+                             samples_signed=True)
+    self._i2s.play(mixer)
+    self._mix_out = mixer.voice[0]
+
+    # TODO: set current volume
+    self._mix_out.level = 1
+
   # --- play the given webradio-station   ------------------------------------
 
   def play(self,url):
@@ -62,6 +80,9 @@ class Player:
           time.sleep(1)
           continue
         self._decoder.file = self._response.socket
+        # adding a mixer is currently too demanding
+        #self._set_mixer(self._decoder)
+        #self._mix_out.play(self._decoder)
         self._i2s.play(self._decoder)
         return True
       except RuntimeError as ex:

@@ -28,11 +28,10 @@ COLSTART     = 53
 ROTATION     = 270
 BRIGHTNESS   = 0.8
 
-PIN_BTN_PREV     = board.GP13      # button B, lower left
-PIN_BTN_NEXT     = board.GP15      # button Y, lower right
-PIN_BTN_VOLDOWN  = board.GP12      # button A, upper left
-PIN_BTN_VOLUP    = board.GP14      # button X, upper right
-PIN_BTN_MUTE    = None
+PIN_BTN_PREV   = board.GP13      # button B, lower left
+PIN_BTN_NEXT   = board.GP15      # button Y, lower right
+PIN_BTN_RELOAD = board.GP12      # button A, upper left
+PIN_BTN_MUTE   = board.GP14      # button X, upper right
 
 PIN_I2S_BCLK = board.GP10
 PIN_I2S_WSEL = board.GP11
@@ -49,7 +48,7 @@ class Config(HWConfig):
                    "rotation": ROTATION, "brightness": BRIGHTNESS},
       # buttons
       btn_pins = [PIN_BTN_PREV, PIN_BTN_NEXT,
-                  PIN_BTN_VOLDOWN, PIN_BTN_VOLUP, PIN_BTN_MUTE],
+                  PIN_BTN_RELOAD, PIN_BTN_MUTE],
       # I2S
       i2s_pins = [PIN_I2S_BCLK, PIN_I2S_WSEL, PIN_I2S_DATA, PIN_I2S_MUTE]
       )

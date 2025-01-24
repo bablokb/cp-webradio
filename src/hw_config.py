@@ -28,13 +28,9 @@ class HWConfig:
     if len(tft_pins) == 5:
       self._tft_parms['backlight_pin'] = tft_pins[4]
 
-    # buttons (mute button is optional)
+    # buttons
     self._active  = btn_active
     self._buttons = btn_pins[:4]
-    if len(btn_pins) == 5:
-      self._buttons.append(btn_pins[4])
-    else:
-      self._buttons.append(None)
 
     # I2S (mute pin is optional)
     self._i2s_pins = i2s_pins[:3]
@@ -56,10 +52,9 @@ class HWConfig:
     return self._tft_driver(display_bus,**self._tft_parms)
 
   def get_keys(self):
-    """ return list of pin-numbers for prev, next, volup, voldown, mute
+    """ return list of pin-numbers for prev, next, reload, mute
 
-    Format: (active-state,[prev, next, voldown, volup, mute])
-    The mute-key is optional and can be omitted or None
+    Format: (active-state,[prev, next, reload, mute])
     """
     return (self._active,self._buttons)
 
@@ -77,5 +72,5 @@ class HWConfig:
     """
     return [(1,-0.25),       # lower left  (prev)
             (-1,-0.25),      # lower right (next)
-            (1,0.25),        # upper left  (voldown)
-            (-1,0.25)]       # upper right (volup)
+            (1,0.25),        # upper left  (reload)
+            (-1,0.25)]       # upper right (mute)

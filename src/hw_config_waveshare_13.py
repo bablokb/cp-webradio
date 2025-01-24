@@ -23,11 +23,10 @@ HEIGHT       = 240
 ROWSTART     = 80
 ROTATION     = 180
 
-PIN_BTN_PREV    = board.GP16      # joystick left
-PIN_BTN_NEXT    = board.GP20      # joystick right
-PIN_BTN_VOLDOWN = board.GP18      # joystick down
-PIN_BTN_VOLUP   = board.GP2       # joystick up
-PIN_BTN_MUTE    = board.GP18      # joystick down
+PIN_BTN_PREV   = board.GP16      # joystick left
+PIN_BTN_NEXT   = board.GP20      # joystick right
+PIN_BTN_RELOAD = board.GP18      # joystick down
+PIN_BTN_MUTE   = board.GP2       # joystick up
 
 PIN_I2S_BCLK = board.GP6
 PIN_I2S_WSEL = board.GP7
@@ -43,7 +42,7 @@ class Config(HWConfig):
                    "rowstart": ROWSTART, "rotation": ROTATION},
       # buttons
       btn_pins = [PIN_BTN_PREV, PIN_BTN_NEXT,
-                  PIN_BTN_VOLDOWN, PIN_BTN_VOLUP, PIN_BTN_MUTE],
+                  PIN_BTN_RELOAD, PIN_BTN_MUTE],
       # I2S
       i2s_pins = [PIN_I2S_BCLK, PIN_I2S_WSEL, PIN_I2S_DATA, PIN_I2S_MUTE]
       )

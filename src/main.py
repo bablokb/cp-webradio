@@ -47,15 +47,12 @@ class Main:
 
     # setup keys and navigation
     keys = hw_config.get_keys()
-    max_keys = 5 if keys[1][4] else 4
-    self._keys = keypad.Keys(keys[1][:max_keys],
+    self._keys = keypad.Keys(keys[1],
                              value_when_pressed=keys[0],pull=True,
                              interval=0.1,max_events=4)
     self._key_events = self._keys.events
     self._key_callbacks = [
-      self._on_prev,self._on_next,self._on_voldown,self._on_volup]
-    if keys[1][4]:
-      self._key_callbacks.append(self._on_mute)
+      self._on_prev,self._on_next,self._on_reload,self._on_mute]
 
   # --- print debug-message   ------------------------------------------------
 
@@ -155,17 +152,12 @@ class Main:
     channel = self._channels.next()
     self._play(channel)
 
-  # --- navigation callback: volume up   -------------------------------------
-
-  def _on_volup(self):
-    """ increase volume """
-    pass
-
   # --- navigation callback: volume down   -----------------------------------
 
-  def _on_voldown(self):
-    """ decrease volume """
-    pass
+  def _on_reload(self):
+    """ reload channel """
+    channel = self._channels.current()
+    self._play(channel)
 
   # --- navigation callback: mute   ------------------------------------------
 

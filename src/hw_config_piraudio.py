@@ -26,9 +26,8 @@ ROTATION     = 180
 
 PIN_BTN_PREV    = board.GPIO6     # button B, lower left
 PIN_BTN_NEXT    = board.GPIO20    # button Y, lower right (newer boards: GPIO24)
-PIN_BTN_VOLDOWN = board.GPIO5     # button A, upper left
-PIN_BTN_VOLUP   = board.GPIO16    # button X, upper right
-PIN_BTN_MUTE    = None
+PIN_BTN_RELOAD  = board.GPIO5     # button A, upper left
+PIN_BTN_MUTE    = board.GPIO16    # button X, upper right
 
 PIN_I2S_BCLK = board.GPIO18
 PIN_I2S_WSEL = board.GPIO19
@@ -44,7 +43,7 @@ class Config(HWConfig):
                    "rowstart": ROWSTART, "rotation": ROTATION},
       # buttons
       btn_pins = [PIN_BTN_PREV, PIN_BTN_NEXT,
-                  PIN_BTN_VOLDOWN, PIN_BTN_VOLUP, PIN_BTN_MUTE],
+                  PIN_BTN_RELOAD, PIN_BTN_MUTE],
       # I2S
       i2s_pins = [PIN_I2S_BCLK, PIN_I2S_WSEL, PIN_I2S_DATA, PIN_I2S_MUTE]
       )

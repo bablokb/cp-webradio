@@ -13,8 +13,10 @@ from adafruit_bitmap_font import bitmap_font
 from adafruit_display_text.bitmap_label import Label
 
 IFONT = "fonts/open-iconic-24.bdf"
-ICONS = ["\uE02E","\uE093","\uE0D6","\uE0D5"]
-#        caret-left, play, voldown, volup
+ICONS = ["\uE097",  # media-step-backward
+         "\uE098",  # media-step-forward
+         "\uE0B3",  # reload
+         "\uE0A1"]  # musical-note
 
 class Logo:
   """ class Logo """

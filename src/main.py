@@ -180,6 +180,7 @@ class Main:
     """ main-loop """
 
     # connect to WLAN
+    self._logo and self._logo.show(img="wlan")
     self._connect()
 
     # check for autoplay

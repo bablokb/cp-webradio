@@ -78,20 +78,23 @@ channels = [
   { "name": "SWR 2",
     "url":  "http://liveradio.swr.de/sw282p3/swr2/",
     "logo": "SWR2"
-  },  # cbr256, too much for a Pico2-W, needs ESP32-S3
+  },  # cbr256, sometimes too much for a Pico2-W, needs ESP32-S3
 
   { "name": "WDR 3",
-    "url":  "http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/64/stream.mp3",
+    "url":  "http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3",
     "logo": "WDR3"
-  },
+  }, # only 64 and 256 available
+
   { "name": "NDR Info",
     "url": "http://icecast.ndr.de/ndr/ndrinfo/niedersachsen/mp3/128/stream.mp3",
     "logo": "NDR-Info"
   },
+
   { "name": "Bremen Zwei",
     "url": "http://icecast.radiobremen.de/rb/bremenzwei/live/mp3/64/stream.mp3",
     "logo": "Bremen-Zwei"
   },
+
   { "name": "Ö 1",
     "url": "http://orf-live.ors-shoutcast.at/oe1-q1a",
     "logo": "OE1"

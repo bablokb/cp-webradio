@@ -34,6 +34,8 @@ class Logo:
     ifont = bitmap_font.load_font(IFONT)
     positions = self._get_positions(display,offsets)
     for icon,pos in zip(ICONS,positions):
+      if not pos:
+        continue  # skip this position
       itext = Label(ifont,text=icon,color=0xFFFFFF,background_color=0x0000FF)
       itext.anchored_position = pos[0]
       itext.anchor_point = pos[1]
@@ -46,6 +48,8 @@ class Logo:
 
     positions = []
     for off in offsets:
+      if not off:
+        positions.append(None)   # skip this position
       # fix relative offsets
       if 0 < abs(off[0]) < 1:
         xp = off[0]*display.width

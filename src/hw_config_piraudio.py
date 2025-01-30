@@ -39,7 +39,8 @@ class Config(HWConfig):
     super().__init__(
       # TFT
       tft_pins = [PIN_TFT_CS, PIN_TFT_DC, PIN_SPI_MOSI, PIN_SPI_CLK],
-      tft_parms = {"width": WIDTH, "height": HEIGHT,
+      tft_parms = {"baudrate": 60_000_000,
+                   "width": WIDTH, "height": HEIGHT,
                    "rowstart": ROWSTART, "rotation": ROTATION},
       # buttons
       btn_pins = [PIN_BTN_PREV, PIN_BTN_NEXT,

@@ -26,7 +26,9 @@ class HWConfig:
     (self.pin_tft_cs, self.pin_tft_dc,
      self.pin_spi_mosi, self.pin_spi_clk) = tft_pins[:4]
     if len(tft_pins) == 5:
-      self._tft_parms['backlight_pin'] = tft_pins[4]
+      self.pin_tft_rst = tft_pins[4]
+    else:
+      self.pin_tft_rst = None
 
     # buttons
     self._active  = btn_active
@@ -43,12 +45,15 @@ class HWConfig:
     """ display definition """
     displayio.release_displays()
     spi = busio.SPI(self.pin_spi_clk, self.pin_spi_mosi)
-    if spi.try_lock():
-      spi.configure(baudrate=60_000_000)
-      spi.unlock()
+    if "baudrate" in self._tft_parms:
+      if spi.try_lock():
+        spi.configure(baudrate=self._tft_parms["baudrate"])
+        spi.unlock()
+      del self._tft_parms["baudrate"]
     display_bus = displayio.FourWire(spi,
                                      command=self.pin_tft_dc,
-                                     chip_select=self.pin_tft_cs)
+                                     chip_select=self.pin_tft_cs,
+                                     reset=self.pin_tft_rst)
     return self._tft_driver(display_bus,**self._tft_parms)
 
   def get_keys(self):

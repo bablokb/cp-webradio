@@ -27,10 +27,11 @@ class Logo:
     self._display.auto_refresh = False
 
     self._group   = displayio.Group()
-    self._text    = None
     self._display.root_group = self._group
 
     # add buttons
+    btn_group = displayio.Group()
+    self._group.append(btn_group)
     ifont = bitmap_font.load_font(IFONT)
     positions = self._get_positions(display,offsets)
     for icon,pos in zip(ICONS,positions):
@@ -39,7 +40,7 @@ class Logo:
       itext = Label(ifont,text=icon,color=0xFFFFFF,background_color=0x0000FF)
       itext.anchored_position = pos[0]
       itext.anchor_point = pos[1]
-      self._group.append(itext)
+      btn_group.append(itext)
 
   # --- query positions of icons   -------------------------------------------
 
@@ -50,6 +51,7 @@ class Logo:
     for off in offsets:
       if not off:
         positions.append(None)   # skip this position
+        continue
       # fix relative offsets
       if 0 < abs(off[0]) < 1:
         xp = off[0]*display.width
@@ -89,7 +91,7 @@ class Logo:
   def _show_image(self,path):
     """ load logo-image as TileGrid """
 
-    if len(self._group) > 4:
+    if len(self._group) > 1:
       self._group.pop()
       gc.collect()
 

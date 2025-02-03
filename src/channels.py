@@ -47,11 +47,12 @@ class Channels:
       for index, channel in enumerate(self._channels):
         if channel.name == name:
           self._current = index
-          return
+          return channel
       raise ValueError(f"channel '{name}' not found")
 
     if 0 <= nr <= self._n:
       self._current = nr
+      return self.current()
     else:
       ValueError(f"illegal channel-number {nr}")
 

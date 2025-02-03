@@ -21,7 +21,7 @@ ICONS = ["\uE097",  # media-step-backward
 class Logo:
   """ class Logo """
 
-  def __init__(self,display,offsets):
+  def __init__(self,display,offsets,extra_icons):
     """ constructor """
     self._display = display
     self._display.auto_refresh = False
@@ -33,18 +33,36 @@ class Logo:
     btn_group = displayio.Group()
     self._group.append(btn_group)
     ifont = bitmap_font.load_font(IFONT)
-    positions = self._get_positions(display,offsets)
+    positions = self._get_positions(offsets)
     for icon,pos in zip(ICONS,positions):
       if not pos:
         continue  # skip this position
-      itext = Label(ifont,text=icon,color=0xFFFFFF,background_color=0x0000FF)
-      itext.anchored_position = pos[0]
-      itext.anchor_point = pos[1]
-      btn_group.append(itext)
+      btn_group.append(self.get_icon(icon,ifont,pos))
+
+    # add extra buttons
+    extra_group = displayio.Group()
+    self._group.append(extra_group)
+    for icon,off in extra_icons:
+      print(f"{icon=}, {off=}")
+      if not off:
+        continue
+      pos = self._get_positions([off])[0]
+      print(f"{pos=}")
+      extra_group.append(self.get_icon(icon,ifont,pos))
+
+  # --- get icon   -----------------------------------------------------------
+
+  def get_icon(self,icon,ifont,pos):
+    """ create icon """
+
+    itext = Label(ifont,text=icon,color=0xFFFFFF,background_color=0x0000FF)
+    itext.anchored_position = pos[0]
+    itext.anchor_point = pos[1]
+    return itext
 
   # --- query positions of icons   -------------------------------------------
 
-  def _get_positions(self,display,offsets):
+  def _get_positions(self,offsets):
     """ return list of (position,anchorpoints) for all icons """
 
     positions = []
@@ -54,20 +72,20 @@ class Logo:
         continue
       # fix relative offsets
       if 0 < abs(off[0]) < 1:
-        xp = off[0]*display.width
+        xp = off[0]*self._display.width
       else:
         xp = off[0]
       if xp < 0:
         # right edge of the screen
-        xp = display.width + xp; xa = 1
+        xp = self._display.width + xp; xa = 1
       else:
         xa = 0
       if 0 < abs(off[1]) < 1:
-        yp = off[1]*display.height
+        yp = off[1]*self._display.height
       else:
         yp = off[1]
       if yp < 0:
-        yp = display.height + yp
+        yp = self._display.height + yp
       positions.append(((xp,yp),(xa,0.5)))
     return positions
 
@@ -91,7 +109,7 @@ class Logo:
   def _show_image(self,path):
     """ load logo-image as TileGrid """
 
-    if len(self._group) > 1:
+    if len(self._group) > 2:
       self._group.pop()
       gc.collect()
 

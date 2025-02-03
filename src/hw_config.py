@@ -32,7 +32,7 @@ class HWConfig:
 
     # buttons
     self._active  = btn_active
-    self._buttons = btn_pins[:4]
+    self._buttons = btn_pins
 
     # I2S (mute pin is optional)
     self._i2s_pins = i2s_pins[:3]
@@ -57,11 +57,18 @@ class HWConfig:
     return self._tft_driver(display_bus,**self._tft_parms)
 
   def get_keys(self):
-    """ return list of pin-numbers for prev, next, reload, mute
+    """ Return list of pin-numbers for prev, next, reload, mute
 
     Format: (active-state,[prev, next, reload, mute])
+
+    If this list is longer than four keys, then the subclass must
+    also implement on_key() and extra_icons().
     """
     return (self._active,self._buttons)
+
+  def on_key(self,nr,app):
+    """ Optional: process non-default keys - override by subclasses """
+    pass
 
   def get_i2s_pins(self):
     return self._i2s_pins
@@ -79,3 +86,9 @@ class HWConfig:
             (-1,-0.25),      # lower right (next)
             (1,0.25),        # upper left  (reload)
             (-1,0.25)]       # upper right (mute)
+
+  def extra_icons(self):
+    """ Return list of (icon,(x-off,y-off)) for extra icons.
+    Override to display additional icons (buttons).
+    """
+    return []

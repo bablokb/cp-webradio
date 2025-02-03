@@ -31,16 +31,21 @@ class Main:
   def __init__(self):
     """ constructor """
 
+    # save app_config
+    self.config = app_config
+
     # basic components
     display = hw_config.get_display()
     if display:
-      self._logo = Logo(display,hw_config.get_icon_offsets())
+      self._logo = Logo(display,
+                        hw_config.get_icon_offsets(),
+                        hw_config.extra_icons())
     else:
       self._logo = None
-    self._channels = Channels()
+    self.channels = Channels()
     self._player   = Player(hw_config.get_i2s_pins(),
                             app_config.bufsize,
-                            self._channels.https)
+                            self.channels.https)
     self._playing  = None
     self._muted    = False
     self._start_at = None
@@ -52,7 +57,11 @@ class Main:
                              interval=0.1,max_events=4)
     self._key_events = self._keys.events
     self._key_callbacks = [
-      self._on_prev,self._on_next,self._on_reload,self._on_mute]
+      self.on_prev,self.on_next,self.on_reload,self.on_mute]
+
+    # add callback for extra keys (delegate to hw_config)
+    for _ in range(4,len(keys[1])):
+      self._key_callbacks.append(hw_config.on_key)
 
   # --- print debug-message   ------------------------------------------------
 
@@ -91,7 +100,7 @@ class Main:
 
   # --- stop playing   -------------------------------------------------------
 
-  def _stop(self):
+  def stop(self):
     """ stop current playback """
 
     self.msg("stopping player")
@@ -99,7 +108,7 @@ class Main:
     self._player.mute(self._muted)
     self._player.stop()
     self._playing = None
-    self.msg(f"_play: free memory after stop(): {gc.mem_free()}")
+    self.msg(f"stop: free memory after stop(): {gc.mem_free()}")
 
   # --- start playing   ------------------------------------------------------
 
@@ -109,24 +118,24 @@ class Main:
     # start given channel
     self._start_at = None
     if not channel:
-      channel = self._channels.current()
+      channel = self.channels.current()
 
     self.msg(f"playing {channel.name}")
     if self._player.play(channel.url):
       self._playing = time.monotonic()
       self._muted = False
       self._player.mute(self._muted)
-      self.msg(f"_play: free memory after play(): {gc.mem_free()}")
+      self.msg(f"_start: free memory after play(): {gc.mem_free()}")
     else:
       self._logo and self._logo.show(img="error")
 
   # --- play a given channel   -----------------------------------------------
 
-  def _play(self,channel):
+  def play(self,channel):
     """ play given channel """
 
     # stop current playback
-    self._stop()
+    self.stop()
 
     # update logo
     self._logo and self._logo.show(channel)
@@ -136,32 +145,32 @@ class Main:
     else:
       # schedule start in a few seconds
       self._start_at = time.monotonic() + app_config.switch_delay
-      self.msg(f"start of {channel.name} in {app_config.switch_delay}s")
+      self.msg(f"play: start of {channel.name} in {app_config.switch_delay}s")
 
   # --- navigation callback: prev   ------------------------------------------
 
-  def _on_prev(self):
+  def on_prev(self):
     """ play previous song in list """
-    channel = self._channels.prev()
-    self._play(channel)
+    channel = self.channels.prev()
+    self.play(channel)
 
   # --- navigation callback: next   ------------------------------------------
 
-  def _on_next(self):
+  def on_next(self):
     """ play next song in list """
-    channel = self._channels.next()
-    self._play(channel)
+    channel = self.channels.next()
+    self.play(channel)
 
   # --- navigation callback: volume down   -----------------------------------
 
-  def _on_reload(self):
+  def on_reload(self):
     """ reload channel """
-    channel = self._channels.current()
-    self._play(channel)
+    channel = self.channels.current()
+    self.play(channel)
 
   # --- navigation callback: mute   ------------------------------------------
 
-  def _on_mute(self):
+  def on_mute(self):
     """ mute player """
     self._muted = not self._muted
     self._player.mute(self._muted)
@@ -178,19 +187,20 @@ class Main:
     # check for autoplay
     if hasattr(app_config,"autoplay"):
       # set channel and play it
-      self._channels.set_current(app_config.autoplay)
-      channel = self._channels.current()
-      self._play(channel)
+      self.play(self.channels.set_current(app_config.autoplay))
     else:
       # select last channel, wait for 'next' to play it
-      self._channels.prev()
+      self.channels.prev()
       self._logo and self._logo.show(img="radio")
 
     while True:
       # check for button
       event = self._key_events.get()
       if event and event.pressed:
-        self._key_callbacks[event.key_number]()
+        if event.key_number < 4:
+          self._key_callbacks[event.key_number]()
+        else:
+          self._key_callbacks[event.key_number](event.key_number,self)
 
       # check for scheduled start
       if self._start_at and time.monotonic() > self._start_at:

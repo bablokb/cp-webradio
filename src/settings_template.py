@@ -31,4 +31,9 @@ app_config.debug = True
 app_config.bufsize = 16384
 app_config.max_wait = 10                         # for channel to start playing
 app_config.switch_delay = 1                      # delay playing after switch
-#app_config.autoplay = "BR Klassik"
+
+#app_config.autoplay = "BR Klassik"              # autoplay after boot
+
+# favorite channels for extra buttons, see hw_config_waveshare_13.py
+# on how to use this
+#app_config.favorites = ["BR Klassik", "MDR KLASSIK"]

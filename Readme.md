@@ -129,7 +129,7 @@ logo, the application will show a default image.
 
 Note that not every station works. In the sample file is a French
 station: it does start but fails after a few seconds. But usually
-streams up to 256cbr play fine. If the station offers multiple URLs
+streams up to cbr256 play fine. If the station offers multiple URLs
 with different bitrates, choose the lowest one with acceptable
 quality. This also depends on your DAC and the headphones or speakers
 you are using.

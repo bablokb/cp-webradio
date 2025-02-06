@@ -1,5 +1,5 @@
-Uing OpenIconic-Font
-====================
+Using the OpenIconic-Font
+=========================
 
 This project uses icons from the [Open Iconic
 Font](https://www.appstudio.dev/app/OpenIconic.html).
@@ -17,9 +17,11 @@ Convert
 -------
 
 After download, convert the TTF-font to the BDF-format. Use the
-[OTF2BDF-tool](https://github.com/jirutka/otf2bdf) for this task:
+[OTF2BDF-tool](https://github.com/jirutka/otf2bdf) for this task
+(adapt the point-size if necessary):
 
     otf2bdf -o open-iconic-24.bdf -p 24 open-iconic.ttf
+
 
 Extract
 -------

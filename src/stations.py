@@ -73,7 +73,7 @@ channels = [
   { "name": "Kultur Radio",
     "url":  "http://dispatcher.rndfnk.com/rbb/rbbkultur/live/mp3/low",
     "logo": "rbb-Kultur"
-  },
+  }, # cbr64
 
   { "name": "SWR 2",
     "url":  "http://liveradio.swr.de/sw282p3/swr2/",
@@ -84,6 +84,11 @@ channels = [
     "url":  "http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3",
     "logo": "WDR3"
   }, # only 64 and 256 available
+
+  #{ "name": "WDR 3",
+  #  "url":  "http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/64/stream.mp3",
+  #  "logo": "WDR3"
+  #}, # only 64 and 256 available
 
   { "name": "NDR Info",
     "url": "http://icecast.ndr.de/ndr/ndrinfo/niedersachsen/mp3/128/stream.mp3",

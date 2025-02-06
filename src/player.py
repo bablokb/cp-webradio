@@ -31,7 +31,7 @@ class Player:
     self._decoder = audiomp3.MP3Decoder("dummy.mp3", self._buffer)
     self._i2s     = audiobusio.I2SOut(*i2s_pins[:3])
 
-    if len(i2s_pins) == 4:
+    if len(i2s_pins) == 4 and i2s_pins[3]:
       # create mute-pin and start muted
       self._mute = digitalio.DigitalInOut(i2s_pins[3])
       self._mute.switch_to_output(value=False)

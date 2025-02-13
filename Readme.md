@@ -34,6 +34,9 @@ This project requires
   - Four buttons for navigation.
   - A display for the station logo.
 
+A Pico-W is fine for streams with a bitrate of cbr64, but many
+stations don't stream their program with a lower bitrate than 128 anymore.
+
 The last two items are not strictly required, but without navigation between
 different streams and without the screen the gadget is a bit boring (but
 good enough to play your single, favorite stream).
@@ -50,6 +53,7 @@ Some example setups:
   - [Pico2-W with Pico-Zero-Base adapter and Pimoroni PirateAudio-Hat](doc/piraudio.md)
   - [Pico2-W with Waveshare Pico LCD-1.3 and PCM5102A](doc/pico2w_waveshare.md)
   - [ESP32-S3 with Pimoroni Display-Pack and Audio-Pack](doc/esp32s3_packs.md)
+  - [Qt-Py ESP32S3 with EYESPI-BFF and Audio-BFF](doc/qtpy_esp32s3.md)
 
 
 Software Requirements
@@ -132,5 +136,5 @@ station: it does start but fails after a few seconds. But usually
 streams up to cbr256 play fine. If the station offers multiple URLs
 with different bitrates, choose the lowest one with acceptable
 quality. This also depends on your DAC and the headphones or speakers
-you are using.
-
+you are using. Also, if possible, select an unencrypted stream, i.e.
+an URL starting with "http:" instead of "https:".

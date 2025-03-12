@@ -127,9 +127,14 @@ your needs. It is a list of dicts with the following structure:
 
 For every station, you can supply an individual logo. Usually, you
 will find suitable images on the website of your radio station. Copy
-this image and convert it to a BMP-file of a suitable size for your
-display. Put the file in the folder `src/logos`. If you don't supply a
-logo, the application will show a default image.
+this image and convert it to a file in BMP or JPG-format of a suitable
+size for your display. Put the file in the folder `src/logos`. If you
+don't supply a logo, the application will show a default image.
+
+BMPs are larger and take up a lot of flash, but loading them uses less
+memory than JPGs. PNGs should also be supported, but this is
+untested. PNGs are probably not better than BMPs regarding
+flash-space.
 
 Note that not every station works. In the sample file is a French
 station: it does start but fails after a few seconds. But usually

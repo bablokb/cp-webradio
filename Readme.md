@@ -70,6 +70,7 @@ Also, this project provides a sample implementation for ST7789-based displays.
 For other display-types, you need the relevant driver. Otherwise, you need
 
   - Adafruit_CircuitPython_Bitmap_Font
+  - Adafruit_CircuitPython_ImageLoad
   - Adafruit_CircuitPython_ConnectionManager
   - Adafruit_CircuitPython_Display_Text
   - Adafruit_CircuitPython_Requests

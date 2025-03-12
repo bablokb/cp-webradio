@@ -45,11 +45,9 @@ class Logo:
     extra_group = displayio.Group()
     self._group.append(extra_group)
     for icon,off in extra_icons:
-      print(f"{icon=}, {off=}")
       if not off:
         continue
       pos = self._get_positions([off])[0]
-      print(f"{pos=}")
       extra_group.append(self.get_icon(icon,ifont,pos))
 
   # --- get icon   -----------------------------------------------------------

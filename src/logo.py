@@ -7,8 +7,10 @@
 # Website: https://github.com/bablokb/cp-webradio
 # -------------------------------------------------------------------------
 
+import os
 import gc
 import displayio
+import adafruit_imageload
 from adafruit_bitmap_font import bitmap_font
 from adafruit_display_text.bitmap_label import Label
 
@@ -95,14 +97,29 @@ class Logo:
     """ load and show logo. Pass img to show explicit bmp (e.g. error) """
 
     if img:
-      logo_path = f"/logos/{img}.bmp"
+      base = f"/logos/{img}"
     else:
-      logo_path = f"/logos/{channel.logo}.bmp"
-    try:
+      base = f"/logos/{channel.logo}"
+    logo_path = self._get_image_path(base)
+    if logo_path:
       self._show_image(logo_path)
-    except Exception as ex:
-      print(f"logo {logo_path} not found (exception: {ex})")
-      self._show_image(f"/logos/default.bmp")
+    else:
+      print(f"no logo-file {base}.* found")
+      self._show_image("/logos/default.bmp")
+
+  # --- get image path   -----------------------------------------------------
+
+  def _get_image_path(self,base):
+    """ return image-path: try bmp, jpg and png"""
+
+    for ext in ["bmp","jpg","png"]:
+      filename = f"{base}.{ext}"
+      try:
+        status = os.stat(filename)
+        return filename
+      except OSError:
+        pass
+    return None
 
   # --- show image   ---------------------------------------------------------
 
@@ -113,10 +130,15 @@ class Logo:
       self._group.pop()
       gc.collect()
 
-    f = open(path, "rb")
-    pic = displayio.OnDiskBitmap(f)
+    if path[-3:] == "bmp":
+      # don't use imageload with bmp, since it has problems with some BMPs
+      f = open(path, "rb")
+      pic = displayio.OnDiskBitmap(f)
+      c_conv = pic.pixel_shader
+    else:
+      pic, c_conv = adafruit_imageload.load(path)
     x = int((self._display.width-pic.width)/2)
     y = int((self._display.height-pic.height)/2)
-    t = displayio.TileGrid(pic, x=x,y=y, pixel_shader=pic.pixel_shader)
+    t = displayio.TileGrid(pic, x=x,y=y, pixel_shader=c_conv)
     self._group.append(t)
     self._display.refresh()
